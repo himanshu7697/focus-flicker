@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Focus Flicker</title>
+  <style>
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+    }
+    #game {
+      position: relative;
+      width: 300px;
+      height: 300px;
+    }
+    .orb {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 60px;
+      height: 60px;
+      margin: -30px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffcc33, #ff9900);
+      box-shadow: 0 0 30px 10px #ffcc33;
+      transition: opacity 0.2s;
+    }
+    .ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 60px;
+      height: 60px;
+      margin: -30px;
+      border-radius: 50%;
+      border: 2px solid #ffaa00;
+      animation: pulse 1.5s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(3);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div class="orb" id="orb"></div>
+    <div class="ring"></div>
+  </div>
+
+  <script>
+    let orb = document.getElementById('orb');
+    let score = 0;
+    let lastClickTime = 0;
+
+    document.addEventListener('click', () => {
+      const now = performance.now();
+      const timeDiff = (now % 1500); // sync with pulse
+      const withinBeat = timeDiff < 300 || timeDiff > 1200;
+
+      if (withinBeat) {
+        score++;
+        orb.style.opacity = 1;
+        orb.style.boxShadow = `0 0 ${30 + score}px ${10 + score/2}px #ffcc33`;
+        orb.style.transform = 'scale(1.1)';
+        setTimeout(() => orb.style.transform = 'scale(1)', 100);
+      } else {
+        score = Math.max(0, score - 1);
+        orb.style.opacity = 0.5;
+        orb.style.boxShadow = '0 0 10px 2px #552200';
+      }
+    });
+  </script>
+</body>
+</html>
